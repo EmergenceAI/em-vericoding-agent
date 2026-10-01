@@ -1,0 +1,15 @@
+[project]
+name = "tiny-agent"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "attrs>=26.1.0",
+    "cattrs>=26.1.0",
+    "docstring-parser>=0.18.0",
+    "python-statemachine[diagrams]>=3.2.0",
+    "rich>=14.3.4",
+]
+
+[dependency-groups]
+litellm = ["litellm>=1.87.1"]
+cli = ["cyclopts>=4.16.1"]

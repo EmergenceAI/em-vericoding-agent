@@ -1,0 +1,16 @@
+[project]
+name = "third-party"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "dspy>=3.2.1",      # verina
+    "loguru>=0.7.3",    # verina
+    "prefect>=3.7.8",   # verina
+    "pydantic>=2.13.4", # verina
+    "polars>=1.42.0",
+    "pyyaml>=6.0.3",
+    "rich>=14.3.4",
+]
+
+[tool.setuptools.package-dir]
+verina = "verina/src/verina"

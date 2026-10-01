@@ -1,0 +1,150 @@
+MemoryAccessList.isConsistent_iff_all_single_address:
+  ground_truth_proof: |-
+    := by
+      constructor
+      · intro h addr
+        have h' := MemoryAccessList.isConsistentSingleAddress_iff (accesses.filterAddress addr) addr (MemoryAccessList.filterAddress_sorted accesses h_sorted addr)
+            (by simp only [filterAddress, List.all_filter, Bool.not_or_self, List.all_eq_true,
+              implies_true])
+        exact h'.mp (MemoryAccessList.isConsistentOnline_filter_of_consistentOnline accesses h_sorted h addr)
+      · intro h
+        -- by induction on the list of accesses
+        induction accesses with
+        | nil =>
+          simp [isConsistentOnline]
+        | cons head tail ih =>
+          obtain ⟨t, a, r, w⟩ := head
+          have h_sorted' : isTimestampSorted tail := by
+            unfold isTimestampSorted at h_sorted
+            exact List.Sorted.of_cons h_sorted
+          specialize ih h_sorted'
+          have h_tail := MemoryAccessList.isConsistentSingleAddress_cons_forall (t, a, r, w) tail h_sorted h
+          specialize ih h_tail
+          simp only [isConsistentOnline, ih, and_true]
+
+          have h_tail_filter_sorted : (MemoryAccessList.filterAddress tail a).isTimestampSorted := by
+            simp only [filterAddress]
+            apply List.Sorted.filter
+            exact h_sorted'
+
+          have h_filtered_sorted : MemoryAccessList.isTimestampSorted ((t, a, r, w) :: (MemoryAccessList.filterAddress tail a)) := by
+            simp only [isTimestampSorted, List.sorted_cons, filterAddress, List.mem_filter,
+              and_imp] at ⊢ h_sorted
+            simp_all only [implies_true, true_and]
+            apply List.Sorted.filter
+            assumption
+
+
+          have h' := MemoryAccessList.lastWriteValue_filter tail h_sorted' a h_tail_filter_sorted
+
+          specialize h a
+          simp [filterAddress_cons] at h
+          -- rw [h']
+
+          have h_iff := MemoryAccessList.isConsistentSingleAddress_iff ((t, a, r, w) :: filterAddress tail a) a h_filtered_sorted
+          simp only [filterAddress, List.all_cons, decide_true, List.all_filter, Bool.not_or_self,
+            Bool.true_and, List.all_eq_true, implies_true, forall_const] at h_iff
+          have is_consistent_online_full := h_iff.mpr h
+          simp only [isConsistentOnline] at is_consistent_online_full
+          simp only [is_consistent_online_full.left]
+          rw [eq_comm]
+          apply MemoryAccessList.lastWriteValue_filter
+Gadgets.Rotation32.Theorems.rotation32_bits_soundness:
+  ground_truth_proof: |-
+    := by
+      -- simplify the goal
+      simp only [rotRight32, rotRight32_u32, U32.valueNat]
+
+      have offset_mod_32 : o % 32 = o := Nat.mod_eq_of_lt (by linarith)
+      simp only [offset_mod_32]
+      rw [h_mod32 ho, h_div32 ho]
+
+      -- proof technique: we care about only what happens to x0, all "internal" terms remain
+      -- the same, and are just divided by 2^o
+      rw [shifted_decomposition_eq ho]
+      repeat rw [shifted_decomposition_eq'' ho (by simp only [gt_iff_lt, Nat.ofNat_pos])]
+      simp only [Nat.add_one_sub_one, pow_one, add_mul, add_assoc]
+      rw [←add_assoc _ _ (_ * 256 ^ 3), soundness_simp]
+      nth_rw 4 [←add_assoc]
+      rw [Nat.mul_right_comm _ 256, soundness_simp]
+      nth_rw 2 [←add_assoc]
+      rw [Nat.mul_right_comm _ 256, soundness_simp']
+      rw [mul_assoc (x.x0 % 2 ^ o), h_x0_const32 ho]
+      ac_rfl
+OracleComp.pure_eq_bind_iff:
+  ground_truth_proof: |-
+    :=
+      eq_comm.trans (bind_eq_pure_iff oa ob y)
+Circuit.FoldlM.forAll_iff_const:
+  ground_truth_proof: |-
+    := by
+      rw [forAll_iff (constant:=constant)]
+      set k := (circuit default default).localLength
+      simp only
+      constructor
+      · intro h
+        constructor
+        · specialize h 0
+          simp only [Fin.val_zero] at h
+          rw [foldlAcc_zero, zero_mul, add_zero] at h
+          exact h
+        · intro i hi
+          specialize h ⟨ i + 1, hi ⟩
+          rw [foldlAcc_const_succ constant h_const_out] at h
+          convert h using 3
+          rw [ConstantLength.length_eq_default constant (init, _)]
+          rfl
+      intro h i
+      rcases i with ⟨ _ | i, hi ⟩
+      · simp only [Fin.mk_zero']
+        rw [foldlAcc_zero, zero_mul, add_zero]
+        exact h.left
+      · rw [foldlAcc_const_succ constant h_const_out]
+        convert (h.right i hi) using 3
+        rw [ConstantLength.length_eq_default constant (init, _)]
+        rfl
+Circomlib.MultiAND.main_output_binary_from_completeness:
+  ground_truth_proof: |-
+    := by
+      apply main_output_binary
+      · assumption
+      · assumption
+      apply Circuit.can_replace_completeness (n := offset)
+      · apply subcircuitsConsistent
+      · rw [main_usesLocalWitnesses_iff_completeness]
+        · exact h_local_witnesses
+        · rfl
+      · exact h_completeness
+Circuit.ext:
+  thm_stmt: |-
+    @[ext]
+    theorem ext {f g : Circuit F α}
+      (h_output : ∀ n, f.output n = g.output n)
+      (h_operations : ∀ n, f.operations n = g.operations n) :
+        f = g
+Imp.Hoare.hoare_while:
+  ground_truth_proof: |-
+    := by
+      intro hHoare st st' hPre hEval
+      -- we proceed by induction on `hEval`
+      generalize hloop : c_while b c = cmd at *
+      induction hEval with simp at *
+      | e_whileFalse =>
+        constructor
+        . exact hPre
+        . simp [*]
+      | e_whileTrue =>
+        simp [*] at *
+        rename_i ih
+        apply ih
+        apply hHoare
+        . constructor
+          . apply hPre
+          . assumption
+        . assumption
+DemonicChoice.ExtractNonDet.extract_refines_wp:
+  rel_path: Loom/MonadAlgebras/NonDetTPrime/Extract.lean
+DemonicChoice.ExtractNonDet.extract_refines_wp_weak:
+  rel_path: Loom/MonadAlgebras/NonDetTPrime/Extract.lean
+p_findNat_some:
+  rel_path: Loom/MonadAlgebras/NonDetTPrime/Extract.lean

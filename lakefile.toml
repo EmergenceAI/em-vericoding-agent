@@ -1,0 +1,12 @@
+name = "AgentWorkspace"
+version = "0.1.0"
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.31.0"
+
+[[require]]
+name = "REPL"
+scope = "leanprover-community"
+rev = "v4.31.0"

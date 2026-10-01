@@ -1,0 +1,54 @@
+[project]
+name = "tiny-vericoding-agent"
+version = "0.1.0"
+description = "Tiny Vericoding Agent"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "lean-tools",
+    "tiny-agent",
+    "third-party",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "mypy>=2.1.0",
+    "pandas>=3.0.3",
+    "pre-commit>=4.6.0",
+    "pyarrow>=25.0.0",
+    "ruff>=0.15.15",
+]
+
+[tool.uv]
+config-settings = { editable_mode = "strict" }
+
+[tool.uv.workspace]
+members = [
+    "lean-tools",
+    "tiny-agent",
+    "third-party",
+]
+
+[tool.uv.sources]
+third-party = { workspace = true }
+tiny-agent = { workspace = true }
+lean-tools = { workspace = true }
+
+[tool.ruff]
+line-length = 128
+
+[tool.ruff.lint]
+select = ["I"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-third-party = ["tiny_agent", "lean_tools"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = '(^|/)build/'

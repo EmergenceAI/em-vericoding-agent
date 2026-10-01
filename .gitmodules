@@ -1,0 +1,6 @@
+[submodule "third-party/verina"]
+	path = third-party/verina
+	url = https://github.com/sunblaze-ucb/verina
+[submodule "third-party/VeriSoftBench"]
+	path = third-party/VeriSoftBench
+	url = https://github.com/utopia-group/VeriSoftBench

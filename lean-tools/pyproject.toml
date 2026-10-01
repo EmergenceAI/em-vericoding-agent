@@ -1,0 +1,9 @@
+[project]
+name = "lean-tools"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "attrs>=26.1.0",
+    "cattrs>=26.1.0",
+]
+ 

@@ -1,0 +1,83 @@
+[
+    {
+        "input": {
+            "lst": "[1, 2, 3, 2, 4]"
+        },
+        "expected": "some 2",
+        "unexpected": [
+            "some 1",
+            "some 3",
+            "none"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[5, 1, 2, 3, 4, 5]"
+        },
+        "expected": "some 5",
+        "unexpected": [
+            "some 1",
+            "none"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[1, 2, 3, 4, 5]"
+        },
+        "expected": "none",
+        "unexpected": [
+            "some 1",
+            "some 2",
+            "some 3"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[7, 7, 7, 7]"
+        },
+        "expected": "some 7",
+        "unexpected": [
+            "none"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[]"
+        },
+        "expected": "none",
+        "unexpected": [
+            "some 0",
+            "some 1"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[-1, 2, -1]"
+        },
+        "expected": "some (-1)",
+        "unexpected": [
+            "none",
+            "some 2"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[1, 2, 2, 1]"
+        },
+        "expected": "some 2",
+        "unexpected": [
+            "some 1",
+            "none"
+        ]
+    },
+    {
+        "input": {
+            "lst": "[3, 1, 2, 1, 3]"
+        },
+        "expected": "some 1",
+        "unexpected": [
+            "some 3",
+            "none"
+        ]
+    }
+]
