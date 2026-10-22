@@ -1,5 +1,7 @@
 # Tiny Vericoding Agent
 
+See the preprint [paper](paper.pdf).
+
 ## Overview
 
 The repo is divided into 3 parts:
@@ -36,8 +38,6 @@ Activate the environment by:
 source .venv/bin/activate
 ```
 
-
-
 ### Lean Environment
 
 The project can use both the local Lean environment and the containerized environment. For now, to set up the containerized environment, you need to set up the local environment first. First, set up [Lean 4](https://lean-lang.org/).
@@ -58,16 +58,6 @@ podman pull busybox
 ```
 
 This will take about half an hour with a good network connection and create an image named `lean-workspace` using the provided `Containerfile`. The image is about 66 GB.
-
-To avoid some warnings that might break the runs
-
-```
-mkdir -p ~/.config/containers
-cat >> ~/.config/containers/containers.conf <<'EOF'
-[engine]
-cgroup_manager = "cgroupfs"
-EOF
-```
 
 ## Usage
 
